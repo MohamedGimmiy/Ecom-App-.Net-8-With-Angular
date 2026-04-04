@@ -16,7 +16,7 @@ namespace Ecom.Infrastructure.Data.Config
             builder.Property(x => x.Name).IsRequired()
                 .HasMaxLength(50);
             builder.Property(x => x.Description).IsRequired();
-            builder.Property(x => x.Price).IsRequired()
+            builder.Property(x => x.NewPrice).IsRequired()
                 .HasPrecision(18, 2);
              builder.Property(x => x.StockQuantity).IsRequired();
              //builder.HasOne(x => x.Category)
@@ -29,8 +29,8 @@ namespace Ecom.Infrastructure.Data.Config
              //   .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasData(
-                new Product { Id = 1, Name = "Smartphone", Description = "Latest model smartphone with advanced features", Price = 699.99m, StockQuantity = 50, CategoryId = 1 },
-                new Product { Id = 2, Name = "Laptop", Description = "High-performance laptop for work and gaming", Price = 1299.99m, StockQuantity = 30, CategoryId = 1 }
+                new Product { Id = 1, Name = "Smartphone", Description = "Latest model smartphone with advanced features", NewPrice = 699.99m, StockQuantity = 50, CategoryId = 1 },
+                new Product { Id = 2, Name = "Laptop", Description = "High-performance laptop for work and gaming", NewPrice = 1299.99m, StockQuantity = 30, CategoryId = 1 }
                 );
         }
     }

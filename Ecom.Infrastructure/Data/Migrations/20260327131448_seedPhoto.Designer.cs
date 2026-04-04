@@ -3,6 +3,7 @@ using Ecom.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Ecom.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260327131448_seedPhoto")]
+    partial class seedPhoto
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -113,11 +116,8 @@ namespace Ecom.Infrastructure.Data.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<decimal>("NewPrice")
+                    b.Property<decimal>("Price")
                         .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("OldPrice")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("StockQuantity")
@@ -136,8 +136,7 @@ namespace Ecom.Infrastructure.Data.Migrations
                             CategoryId = 1,
                             Description = "Latest model smartphone with advanced features",
                             Name = "Smartphone",
-                            NewPrice = 699.99m,
-                            OldPrice = 0m,
+                            Price = 699.99m,
                             StockQuantity = 50
                         },
                         new
@@ -146,8 +145,7 @@ namespace Ecom.Infrastructure.Data.Migrations
                             CategoryId = 1,
                             Description = "High-performance laptop for work and gaming",
                             Name = "Laptop",
-                            NewPrice = 1299.99m,
-                            OldPrice = 0m,
+                            Price = 1299.99m,
                             StockQuantity = 30
                         });
                 });

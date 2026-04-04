@@ -1,6 +1,10 @@
-﻿using Ecom.Core.Entities.Product;
+﻿using AutoMapper;
+using Ecom.Core.DTO;
+using Ecom.Core.Entities.Product;
 using Ecom.Core.Interfaces;
+using Ecom.Core.Services;
 using Ecom.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,8 +16,78 @@ namespace Ecom.Infrastructure.Repositories
 {
     public class ProductRepositry :GenericRepository<Product>, IProductRepositry
     {
-        public ProductRepositry(AppDbContext context) : base(context)
+        private readonly AppDbContext context;
+        private readonly IMapper mapper;
+        private readonly IImageManagementService imageManagementService;
+        public ProductRepositry(AppDbContext context, IMapper mapper, IImageManagementService imageManagementService) : base(context)
         {
+            this.context = context;
+            this.mapper = mapper;
+            this.imageManagementService = imageManagementService;
+        }
+
+        public async Task<bool> AddAsync(AddProductDTO productDTO)
+        {
+            if (productDTO == null) return false;
+            var product = mapper.Map<Product>(productDTO);
+            await context.Products.AddAsync(product);
+            await context.SaveChangesAsync();
+
+            var imagePath = 
+                await imageManagementService
+                .AddImageAsync(productDTO.Photo, productDTO.Name);
+
+            var photo = imagePath.Select(path => new Photo
+            {
+                ImageName = path,
+                ProductId = product.Id
+            }).ToList();
+
+            await context.Photos.AddRangeAsync(photo);
+            await context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> UpdateAsync(UpdateProductDTO updateProductDTO)
+        {
+            if(updateProductDTO is null)
+            {
+                return false;
+            }
+            var findProduct = await context.Products
+                .Include(p => p.Category)
+                .Include(m => m.Photos)
+                .FirstOrDefaultAsync(m => m.Id == updateProductDTO.Id);
+
+            if(findProduct is null)
+            {
+                return false;
+            }
+            mapper.Map(updateProductDTO, findProduct);
+
+
+            var FindPhoto = findProduct.Photos;
+            foreach (var item in FindPhoto)
+            {
+                imageManagementService.DeleteImageAsync(item.ImageName);
+            }
+            context.Photos.RemoveRange(FindPhoto);
+            await context.SaveChangesAsync();
+
+            var ImagePath = await imageManagementService
+                .AddImageAsync(updateProductDTO.Photo, updateProductDTO.Name);
+
+            var updatedProductId = updateProductDTO.Id;
+            var photo = ImagePath.Select(path => new Photo
+            {
+                ImageName = path,
+                ProductId = updatedProductId,   
+            });
+
+            await context.Photos.AddRangeAsync(photo);
+            await context.SaveChangesAsync();
+
+            return true;
         }
     }
 }

@@ -10,6 +10,7 @@ namespace Ecom.API.Controllers
 {
     public class ProductsController : BaseController
     {
+
         public ProductsController(IUnitOfWork work, IMapper mapper) : base(work, mapper)
         {
         }
@@ -33,6 +34,55 @@ namespace Ecom.API.Controllers
             }
 
 
+        }
+        [HttpGet("get-by-id/{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            try
+            {
+                var product = await work.ProductRepositry
+                    .GetByIdAsync(id, x => x.Category, x => x.Photos);
+
+                var result = mapper.Map<ProductDTO>(product);
+
+                if (result is null)
+                {
+                    return BadRequest(new ResponseAPI(400, "No Product Found"));
+                }
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
+
+        }
+        [HttpPost("Add-Product")]
+        public async Task<IActionResult> Add(AddProductDTO productDTO)
+        {
+            try
+            {
+                await work.ProductRepositry.AddAsync(productDTO);
+                return Ok(new ResponseAPI(200, "Product Added Successfully"));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ResponseAPI(400, ex.Message));
+            }
+        }
+        [HttpPut("Update-Product")]
+        public async Task<IActionResult> Update(UpdateProductDTO updateProductDTO)
+        {
+            try
+            {
+                await work.ProductRepositry.UpdateAsync(updateProductDTO);
+                return Ok(new ResponseAPI(200));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ResponseAPI(400, ex.Message));
+            }
         }
     }
 }
