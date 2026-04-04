@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\Images\NewFolder\**" />
+    <Content Remove="wwwroot\Images\NewFolder\**" />
+    <EmbeddedResource Remove="wwwroot\Images\NewFolder\**" />
+    <None Remove="wwwroot\Images\NewFolder\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="16.1.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.25">
       <PrivateAssets>all</PrivateAssets>

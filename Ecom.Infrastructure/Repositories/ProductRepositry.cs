@@ -48,6 +48,8 @@ namespace Ecom.Infrastructure.Repositories
             return true;
         }
 
+        
+
         public async Task<bool> UpdateAsync(UpdateProductDTO updateProductDTO)
         {
             if(updateProductDTO is null)
@@ -88,6 +90,18 @@ namespace Ecom.Infrastructure.Repositories
             await context.SaveChangesAsync();
 
             return true;
+        }
+
+        public async Task DeleteAsync(Product product)
+        {
+            var photo =product.Photos;
+
+            foreach (var item in photo)
+            {
+                imageManagementService.DeleteImageAsync(item.ImageName);
+            }
+            context.Products.Remove(product);
+            await context.SaveChangesAsync();
         }
     }
 }
