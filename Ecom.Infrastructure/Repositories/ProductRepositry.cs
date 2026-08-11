@@ -3,6 +3,7 @@ using Ecom.Core.DTO;
 using Ecom.Core.Entities.Product;
 using Ecom.Core.Interfaces;
 using Ecom.Core.Services;
+using Ecom.Core.Sharing;
 using Ecom.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -26,6 +27,53 @@ namespace Ecom.Infrastructure.Repositories
             this.imageManagementService = imageManagementService;
         }
 
+        public async Task<ReturnProductDTO> GetAllAsync(ProductParams productParams)
+        {
+            var query = context.Products
+                .Include(p => p.Category)
+                .Include(m => m.Photos)
+                .AsNoTracking();
+
+            // filtering by search term if Search is provided
+
+            if (!string.IsNullOrEmpty(productParams.Search))
+            {
+                //var searchTerm = productParams.Search.ToLower();
+                //query = query.Where(p => p.Name.ToLower().Contains(searchTerm) 
+                //||
+                //p.Description.ToLower().Contains(searchTerm));
+
+                var searchWords = productParams.Search.ToLower().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                query = query.Where(p => searchWords.Any(word =>
+                    p.Name.ToLower().Contains(word) ||
+                    p.Description.ToLower().Contains(word)));
+            }
+            // Filtering by category if CategoryID is provided
+            if (productParams.CategoryID.HasValue)
+            {
+                query = query.Where(p => p.CategoryId == productParams.CategoryID.Value);
+
+            }
+                if (!string.IsNullOrEmpty(productParams.Sort))
+            {
+                query = productParams.Sort switch
+                {
+                    "name" => query.OrderBy(p => p.Name),
+                    "priceAsn" => query.OrderBy(p => p.NewPrice),
+                    "priceDsn" => query.OrderByDescending(p => p.NewPrice),
+                    _ => query.OrderBy(p => p.Name)
+                };
+            }
+
+            ReturnProductDTO returnProductDTO = new ReturnProductDTO();
+            returnProductDTO.TotalCount = await query.CountAsync();
+
+            query = query
+                .Skip((productParams.PageNumber - 1) * productParams.pageSize)
+                .Take(productParams.pageSize);
+            returnProductDTO.Products = mapper.Map<List<ProductDTO>>(await query.ToListAsync());
+            return returnProductDTO;
+        }
         public async Task<bool> AddAsync(AddProductDTO productDTO)
         {
             if (productDTO == null) return false;

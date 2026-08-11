@@ -19,14 +19,16 @@ namespace Ecom.Infrastructure.Data.Config
             builder.Property(x => x.NewPrice).IsRequired()
                 .HasPrecision(18, 2);
              builder.Property(x => x.StockQuantity).IsRequired();
-             //builder.HasOne(x => x.Category)
-             //   .WithMany(c => c.Products)
-             //   .HasForeignKey(x => x.CategoryId)
-             //   .OnDelete(DeleteBehavior.Cascade);
-             // builder.HasMany(x => x.Photos)
-             //   .WithOne(p => p.Product)
-             //   .HasForeignKey(p => p.ProductId)
-             //   .OnDelete(DeleteBehavior.Cascade);
+            builder.Property(x => x.OldPrice).IsRequired()
+                .HasPrecision(18, 2);
+            //builder.HasOne(x => x.Category)
+            //   .WithMany(c => c.Products)
+            //   .HasForeignKey(x => x.CategoryId)
+            //   .OnDelete(DeleteBehavior.Cascade);
+            // builder.HasMany(x => x.Photos)
+            //   .WithOne(p => p.Product)
+            //   .HasForeignKey(p => p.ProductId)
+            //   .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasData(
                 new Product { Id = 1, Name = "Smartphone", Description = "Latest model smartphone with advanced features", NewPrice = 699.99m, StockQuantity = 50, CategoryId = 1 },

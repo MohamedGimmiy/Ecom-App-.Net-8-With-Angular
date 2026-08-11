@@ -59,7 +59,7 @@ namespace Ecom.API.Middleware
             });
             if(DateNow - timeStamp < TimeSpan.FromSeconds(30))
             {
-                if(count >= 8)
+                if(count >= 20)
                 {
                     return false; // Block the request
                 }
@@ -76,7 +76,7 @@ namespace Ecom.API.Middleware
         private void ApplySecuirty(HttpContext context)
         {
             context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
-            context.Response.Headers["X-XSS-Protection"] = "1; mode=block";]
+            context.Response.Headers["X-XSS-Protection"] = "1; mode=block";
             context.Response.Headers["X-Frame-Options"] = "DENY";
         }
     }
