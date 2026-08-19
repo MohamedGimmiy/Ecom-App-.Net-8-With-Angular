@@ -20,7 +20,7 @@ namespace Ecom.Infrastructure.Repositories.Services
         public async Task sendEmail(EmailDTO emailDTO)
         {
             MimeMessage message = new MimeMessage();
-            message.From.Add(new MailboxAddress("My Ecom",_configuration["EmailSetings:From"]));
+            message.From.Add(new MailboxAddress("My Ecom",_configuration["EmailSettings:From"]));
             message.Subject = emailDTO.Subject;
             message.To.Add(new MailboxAddress(emailDTO.To, emailDTO.To));
             message.Body =  new TextPart(MimeKit.Text.TextFormat.Html)
@@ -32,12 +32,12 @@ namespace Ecom.Infrastructure.Repositories.Services
                 try
                 {
                     await smtp.ConnectAsync(
-                        _configuration["EmailSetings:smtp"],
-                        Convert.ToInt32(_configuration["EmailSetings:Port"]), true);
+                        _configuration["EmailSettings:smtp"],
+                        Convert.ToInt32(_configuration["EmailSettings:Port"]));
 
                     await smtp.AuthenticateAsync(
-                        _configuration["EmailSetings:Username"],
-                        _configuration["EmailSetings:Password"]);
+                        _configuration["EmailSettings:UserName"],
+                        _configuration["EmailSettings:Password"]);
 
                     await smtp.SendAsync(message);
                 }

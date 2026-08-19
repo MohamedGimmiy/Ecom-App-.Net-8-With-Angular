@@ -32,7 +32,7 @@ namespace Ecom.Infrastructure.Repositories
             if (registerDTO == null) {
                 return null;
             }
-            if (await userManager.FindByNameAsync(registerDTO.userName) != null)
+            if (await userManager.FindByNameAsync(registerDTO.UserName) != null)
             {
                 return "This userName is Already registered";
             }
@@ -43,8 +43,9 @@ namespace Ecom.Infrastructure.Repositories
             }
             var user = new AppUser
             {
-                UserName = registerDTO.userName,
-                Email = registerDTO.Email
+                UserName = registerDTO.UserName,
+                Email = registerDTO.Email,
+                DisplayName = registerDTO.DisplayName
             };
             var result = await userManager.CreateAsync(user, registerDTO.Password);
             if (result.Succeeded)
@@ -110,19 +111,19 @@ namespace Ecom.Infrastructure.Repositories
             var result = await userManager.ResetPasswordAsync(findUser, resetPasswordDTO.Token, resetPasswordDTO.Password);
             if (result.Succeeded)
             {
-                return "Password Changed successfully!";
+                return "done";
             }
             return result.Errors.ToList()[0].Description;
         }
 
-        public async Task<bool> ActiveEmail(ActiveEmailDTO activeEmailDTO)
+        public async Task<bool> ActiveAccount(ActiveAccountDTO activeAccountDTO)
         {
-            var findUser = await userManager.FindByEmailAsync(activeEmailDTO.Email);
+            var findUser = await userManager.FindByEmailAsync(activeAccountDTO.Email);
             if (findUser is null)
             {
                 return false;
             }
-            var result = await userManager.ConfirmEmailAsync(findUser, activeEmailDTO.Token);
+            var result = await userManager.ConfirmEmailAsync(findUser, activeAccountDTO.Token);
             if (result.Succeeded)
             {
                 return true;
@@ -134,5 +135,7 @@ namespace Ecom.Infrastructure.Repositories
             return false;
 
         }
+
+
     }
 }

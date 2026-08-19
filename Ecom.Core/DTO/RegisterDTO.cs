@@ -14,7 +14,8 @@ namespace Ecom.Core.DTO
     }
     public record RegisterDTO : LoginDTO
     {
-        public string userName { get; set; }
+        public string UserName { get; set; }
+        public string DisplayName { get; set; }
 
     }
 
@@ -23,7 +24,7 @@ namespace Ecom.Core.DTO
         public string Token { get; set; }
     }
 
-    public record ActiveEmailDTO
+    public record ActiveAccountDTO
     {
         public string Email { get; set; }
         public string Token { get; set; }
