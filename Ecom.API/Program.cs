@@ -47,6 +47,7 @@ namespace Ecom.API
             }
             app.UseStaticFiles();
             app.UseMiddleware<Middleware.ExceptionMiddleware>();
+            app.UseCors("CORSPolicy");
 
             app.UseAuthentication();
             app.UseAuthorization();
@@ -54,8 +55,6 @@ namespace Ecom.API
             app.UseStatusCodePagesWithReExecute("/errors/{0}");
             app.UseHttpsRedirection();
 
-            app.UseAuthorization();
-            app.UseCors("CORSPolicy");
 
             app.MapControllers();
 
